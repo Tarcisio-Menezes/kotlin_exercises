@@ -7,7 +7,6 @@ fun main() {
 }
 
 fun whatsNumber(x: Int) {
-
     when(x) {
         5 -> println("x é 5")
         8 -> println("x é 8")
