@@ -4,6 +4,7 @@ import com.mercadolivro.controller.request.PostCustomerRequest
 import com.mercadolivro.model.CustomerModel
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
+import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 
 @RestController
 @RequestMapping("customer")
@@ -14,6 +15,16 @@ class CustomerController {
     @GetMapping
     fun getAllCustomer(): List<CustomerModel> {
         return customers
+    }
+
+    @GetMapping("/{id}")
+    fun getCustomer(@PathVariable id: Int): CustomerModel? {
+        for (customer in customers) {
+            if(customer.id == id) {
+                return customer
+            }
+        }
+        return null
     }
 
     @PostMapping
