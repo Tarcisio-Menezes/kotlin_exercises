@@ -1,6 +1,7 @@
 package com.mercadolivro.service
 
 import com.mercadolivro.controller.request.PostCustomerRequest
+import com.mercadolivro.controller.request.PutCustomerRequest
 import com.mercadolivro.model.CustomerModel
 import org.springframework.stereotype.Service
 
@@ -25,7 +26,7 @@ class CustomerService {
         return null
     }
 
-    fun update(id: Int, customer: PostCustomerRequest): CustomerModel? {
+    fun update(id: Int, customer: PutCustomerRequest): CustomerModel? {
 //        for (index in customers) {
 //            if (index.id == id) {
 //                index.name = customer.name

@@ -1,6 +1,7 @@
 package com.mercadolivro.controller
 
 import com.mercadolivro.controller.request.PostCustomerRequest
+import com.mercadolivro.controller.request.PutCustomerRequest
 import com.mercadolivro.extension.toCustomerModel
 import com.mercadolivro.model.CustomerModel
 import com.mercadolivro.service.CustomerService
@@ -25,8 +26,8 @@ class CustomerController (
     }
 
     @PutMapping("/{id}")
-    fun update(@PathVariable id: Int, @RequestBody customer: PostCustomerRequest): CustomerModel? {
-        return customerService.update(id, customer)
+    fun update(@PathVariable id: Int, @RequestBody customer: PutCustomerRequest): CustomerModel? {
+        return customerService.update(id, customer.toCustomerModel())
     }
 
     @PostMapping
