@@ -27,7 +27,8 @@ class CustomerController (
 
     @PutMapping("/{id}")
     fun update(@PathVariable id: Int, @RequestBody customer: PutCustomerRequest): CustomerModel? {
-        return customerService.update(id, customer.toCustomerModel())
+        customerService.update(id, customer.toCustomerModel())
+        return CustomerModel(id, customer.name, customer.email)
     }
 
     @PostMapping
