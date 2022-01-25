@@ -5,6 +5,7 @@ plugins {
 	id("io.spring.dependency-management") version "1.0.11.RELEASE"
 	kotlin("jvm") version "1.6.10"
 	kotlin("plugin.spring") version "1.6.10"
+	kotlin("plugin.jpa") version "1.4.21" // adicionado para funcionar o getById
 }
 
 group = "com.mercadolivro"
@@ -21,6 +22,9 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+	runtimeOnly( "mysql:mysql-connector-java")
+	implementation("org.flywaydb:flyway-core:7.7.0")
 }
 
 tasks.withType<KotlinCompile> {
