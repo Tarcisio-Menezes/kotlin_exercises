@@ -3,6 +3,6 @@ spring:
     hibernate:
       ddl-auto: update
   datasource:
-    url: jdbc:mysql://localhost:3306/mercadolivro?createDatabaseIFNotExist=true
+    url: jdbc:mysql://localhost:3306/mercadolivro?createDatabaseIfNotExist=true
     username: tarcisio
     password: delphi77
