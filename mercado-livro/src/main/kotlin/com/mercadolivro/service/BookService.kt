@@ -2,6 +2,7 @@ package com.mercadolivro.service
 
 import com.fasterxml.jackson.annotation.JsonAlias
 import com.mercadolivro.controller.request.PostBookRequest
+import com.mercadolivro.enums.BookStatus
 import com.mercadolivro.model.BookModel
 import com.mercadolivro.model.CustomerModel
 import com.mercadolivro.repository.BookRepository
@@ -22,5 +23,13 @@ class BookService(
             return bookRepository.findByNameContaining(name)
         }
         return bookRepository.findAll().toList()
+    }
+
+    fun findByActive(): List<BookModel> {
+        return bookRepository.findByStatus(BookStatus.ATIVO)
+    }
+
+    fun findById(id: Int): BookModel {
+        return bookRepository.findById(id).orElseThrow()
     }
 }

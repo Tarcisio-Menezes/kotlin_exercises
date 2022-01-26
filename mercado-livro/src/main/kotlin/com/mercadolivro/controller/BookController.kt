@@ -26,4 +26,15 @@ class BookController(
     fun findAll(@RequestParam name: String?): List<BookModel> {
         return bookService.findAll(name)
     }
+
+    @GetMapping("/active")
+    fun findByActive(): List<BookModel> {
+        return bookService.findByActive()
+    }
+
+    @GetMapping("/{id}")
+    fun findById(@PathVariable id: Int): BookModel {
+        return bookService.findById(id)
+    }
+
 }
