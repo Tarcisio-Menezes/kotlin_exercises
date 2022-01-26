@@ -1,10 +1,7 @@
 package com.mercadolivro.service
 
-import com.fasterxml.jackson.annotation.JsonAlias
-import com.mercadolivro.controller.request.PostBookRequest
 import com.mercadolivro.enums.BookStatus
 import com.mercadolivro.model.BookModel
-import com.mercadolivro.model.CustomerModel
 import com.mercadolivro.repository.BookRepository
 import org.springframework.stereotype.Service
 
@@ -37,5 +34,10 @@ class BookService(
         val book: BookModel = findById(id)
         book.status = BookStatus.CANCELADO
         bookRepository.save(book)
+    }
+
+    fun update(book: BookModel): BookModel {
+        bookRepository.save(book)
+        return book
     }
 }
