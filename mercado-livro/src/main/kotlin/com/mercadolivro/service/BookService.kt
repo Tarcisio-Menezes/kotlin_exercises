@@ -34,9 +34,8 @@ class BookService(
     }
 
     fun delete(id: Int) {
-        if (bookRepository.existsById(id)) {
-            return bookRepository.deleteById(id)
-        }
-        throw Exception()
+        val book: BookModel = findById(id)
+        book.status = BookStatus.CANCELADO
+        bookRepository.save(book)
     }
 }
