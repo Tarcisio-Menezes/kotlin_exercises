@@ -21,4 +21,9 @@ class BookController(
         val customer = customerService.getCustomerById(book.customerId)
         return bookService.create(book.toBookModel(customer))
     }
+
+    @GetMapping
+    fun findAll(@RequestParam name: String?): List<BookModel> {
+        return bookService.findAll(name)
+    }
 }

@@ -3,6 +3,7 @@ package com.mercadolivro.service
 import com.fasterxml.jackson.annotation.JsonAlias
 import com.mercadolivro.controller.request.PostBookRequest
 import com.mercadolivro.model.BookModel
+import com.mercadolivro.model.CustomerModel
 import com.mercadolivro.repository.BookRepository
 import org.springframework.stereotype.Service
 
@@ -13,6 +14,13 @@ class BookService(
 
     fun create(book: BookModel): BookModel {
         bookRepository.save(book)
-        return BookModel(name = book.name, price = book.price, customer = book.customer)
+        return BookModel(id = book.id, name = book.name, price = book.price, book.status, customer = book.customer)
+    }
+
+    fun findAll(name: String?): List<BookModel> {
+        name?.let {
+            return bookRepository.findByNameContaining(name)
+        }
+        return bookRepository.findAll().toList()
     }
 }
