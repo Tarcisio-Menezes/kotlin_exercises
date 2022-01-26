@@ -7,7 +7,6 @@ import com.mercadolivro.model.CustomerModel
 import com.mercadolivro.service.CustomerService
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
-import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 
 @RestController
 @RequestMapping("customer")
@@ -22,7 +21,7 @@ class CustomerController (
 
     @GetMapping("/{id}")
     fun getCustomer(@PathVariable id: Int): CustomerModel? {
-        return customerService.getCustomer(id)
+        return customerService.getCustomerById(id)
     }
 
     @PutMapping("/{id}")

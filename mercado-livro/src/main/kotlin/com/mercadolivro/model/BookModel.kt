@@ -3,7 +3,7 @@ package com.mercadolivro.model
 import com.mercadolivro.enums.BookStatus
 import javax.persistence.*
 
-@Entity(name = "customer")
+@Entity(name = "book")
 data class BookModel(
 
     @Id
