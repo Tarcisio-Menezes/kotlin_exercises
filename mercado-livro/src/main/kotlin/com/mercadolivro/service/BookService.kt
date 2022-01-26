@@ -32,4 +32,11 @@ class BookService(
     fun findById(id: Int): BookModel {
         return bookRepository.findById(id).orElseThrow()
     }
+
+    fun delete(id: Int) {
+        if (bookRepository.existsById(id)) {
+            return bookRepository.deleteById(id)
+        }
+        throw Exception()
+    }
 }
