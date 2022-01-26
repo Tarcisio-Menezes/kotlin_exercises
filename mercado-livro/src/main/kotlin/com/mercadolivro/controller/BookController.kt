@@ -2,12 +2,11 @@ package com.mercadolivro.controller
 
 import com.mercadolivro.controller.request.PostBookRequest
 import com.mercadolivro.extension.toBookModel
+import com.mercadolivro.model.BookModel
 import com.mercadolivro.service.BookService
 import com.mercadolivro.service.CustomerService
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("book")
@@ -17,8 +16,9 @@ class BookController(
 ) {
 
     @PostMapping
-    fun create(@RequestBody book: PostBookRequest) {
+    @ResponseStatus(HttpStatus.CREATED)
+    fun create(@RequestBody book: PostBookRequest): BookModel {
         val customer = customerService.getCustomerById(book.customerId)
-        bookService.create(book.toBookModel(customer))
+        return bookService.create(book.toBookModel(customer))
     }
 }
