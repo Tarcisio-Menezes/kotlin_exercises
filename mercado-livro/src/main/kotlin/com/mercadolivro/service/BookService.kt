@@ -16,7 +16,7 @@ class BookService(
 ) {
 
     fun create(book: CreateBookRequest): Book {
-        kotlin.runCatching {
+        runCatching {
             customerService.getCustomerByIdentifier(book.customerIdentifier).let {
                 return book.toModelBook(it)
             }
@@ -24,32 +24,32 @@ class BookService(
     }
 
     fun findAll(name: String?): List<Book> {
-        try {
+        runCatching {
             name?.let {
                 return bookRepository.findByNameContaining(name)
             }
             return bookRepository.findAll().toList()
-        } catch (e: Exception) {
+        }.getOrElse {
             throw Exception()
         }
     }
 
     fun findByActive(): List<Book> {
-        try {
+        runCatching {
             return bookRepository.findByStatus(BookStatus.ATIVO)
-        } catch (e: Exception) {
+        }.getOrElse {
             throw Exception()
         }
     }
 
     fun findById(identifier: UUID): Book {
-        kotlin.runCatching {
+        runCatching {
             return bookRepository.findByIdentifier(identifier)!!
         }.getOrElse { throw Exception() }
     }
 
     fun delete(identifier: UUID) {
-        kotlin.runCatching {
+        runCatching {
             return bookRepository.findByIdentifier(identifier).let {
                     book ->
                 bookRepository.save(book!!.copy(status = BookStatus.CANCELADO))
@@ -58,27 +58,24 @@ class BookService(
     }
 
     fun update(book: Book): Book {
-        try {
+        runCatching{
             bookRepository.save(book)
             return book
-        } catch (e: Exception) {
+        }.getOrElse {
             throw Exception()
         }
     }
 
-    fun enable(identifier: UUID): Book {
-        try {
+    fun enable(identifier: UUID): Book? {
+        return runCatching {
             bookRepository.findByIdentifier(identifier).apply {
                 bookRepository.save(this!!.copy(status = BookStatus.ATIVO))
-                return this
             }
-        } catch (e: Exception) {
-            throw Exception()
-        }
+        }.getOrElse { throw Exception() }
     }
 
     fun deleteByCustomer(customer: Customer) {
-        kotlin.runCatching {
+        runCatching {
             val books = bookRepository.findByCustomer(customer)
             books.map {
                     book -> bookRepository.save(book.copy(status = BookStatus.DELETADO))
