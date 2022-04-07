@@ -1,11 +1,11 @@
 package com.mercadolivro.service
 
 import com.mercadolivro.controller.request.CreateBookRequest
+import com.mercadolivro.controller.request.UpdateBookRequest
 import com.mercadolivro.enums.BookStatus
 import com.mercadolivro.model.Book
 import com.mercadolivro.model.Customer
 import com.mercadolivro.repository.BookRepository
-import com.mercadolivro.repository.CustomerRepository
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -23,7 +23,7 @@ class BookService(
         }.getOrElse { throw Exception() }
     }
 
-    fun findAll(name: String?): List<Book> {
+    fun findAll(name: String?): Collection<Book> {
         runCatching {
             name?.let {
                 return bookRepository.findByNameContaining(name)
@@ -34,7 +34,7 @@ class BookService(
         }
     }
 
-    fun findByActive(): List<Book> {
+    fun findByActive(): Collection<Book> {
         runCatching {
             return bookRepository.findByStatus(BookStatus.ATIVO)
         }.getOrElse {
@@ -57,10 +57,15 @@ class BookService(
         }.getOrElse { throw Exception() }
     }
 
-    fun update(book: Book): Book {
-        runCatching{
-            bookRepository.save(book)
-            return book
+    fun update(identifier: UUID, book: UpdateBookRequest): Book {
+        return runCatching{
+            findById(identifier).apply {
+                bookRepository.save(this.copy(
+                    name = book.name ?: this.name,
+                    image = book.image ?: this.image,
+                    price = book.price ?: this.price
+                ))
+            }
         }.getOrElse {
             throw Exception()
         }

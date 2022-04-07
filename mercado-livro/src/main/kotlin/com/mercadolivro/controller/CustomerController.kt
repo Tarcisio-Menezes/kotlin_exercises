@@ -7,6 +7,7 @@ import com.mercadolivro.model.Customer
 import com.mercadolivro.service.CustomerService
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
+import java.util.UUID
 
 @RestController
 @RequestMapping("customer")
@@ -19,9 +20,9 @@ class CustomerController (
         return customerService.getAll(name)
     }
 
-    @GetMapping("/{id}")
-    fun getCustomer(@PathVariable id: Int): Customer? {
-        return customerService.getCustomerByIdentifierentifier(id)
+    @GetMapping("/{identifier}")
+    fun getCustomer(@PathVariable id: UUID): Customer? {
+        return customerService.getCustomerByIdentifier(id)
     }
 
     @GetMapping("/active")
@@ -30,7 +31,7 @@ class CustomerController (
     }
 
     @PutMapping("/{id}")
-    fun update(@PathVariable id: Int, @RequestBody customer: UpdateCustomerRequest): Customer? {
+    fun update(@PathVariable id: UUID, @RequestBody customer: UpdateCustomerRequest): Customer? {
         customerService.update(id, customer.toCustomerModel())
         return Customer(id, customer.name, customer.email)
     }

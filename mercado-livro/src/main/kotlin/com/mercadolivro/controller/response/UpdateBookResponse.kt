@@ -14,11 +14,11 @@ class UpdateBookResponse(
     val customer: Customer
 )
 
-fun Book.toUpdateAPIResponse() = CreateBookResponse(
+fun Book.toUpdateAPIResponse() = UpdateBookResponse(
     name = this.name,
     identifier = this.identifier,
     status = this.status!!,
     price = this.price,
     image = this.image,
-    customerIdentifier = this.customer!!.identifier
+    customer = this.customer!!
 )
