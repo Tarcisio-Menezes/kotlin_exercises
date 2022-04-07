@@ -1,13 +1,17 @@
 package com.mercadolivro.controller
 
-import com.mercadolivro.controller.request.PostBookRequest
-import com.mercadolivro.controller.request.PutBookRequest
+import com.mercadolivro.controller.request.CreateBookRequest
+import com.mercadolivro.controller.request.UpdateBookRequest
+import com.mercadolivro.controller.response.CreateBookResponse
+import com.mercadolivro.controller.response.UpdateBookResponse
+import com.mercadolivro.controller.response.toCreateAPIResponse
 import com.mercadolivro.extension.toBookModel
-import com.mercadolivro.model.BookModel
+import com.mercadolivro.model.Book
 import com.mercadolivro.service.BookService
 import com.mercadolivro.service.CustomerService
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
+import java.util.UUID
 
 @RestController
 @RequestMapping("book")
@@ -18,23 +22,22 @@ class BookController(
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun create(@RequestBody book: PostBookRequest): BookModel {
-        val customer = customerService.getCustomerById(book.customerId)
-        return bookService.create(book.toBookModel(customer))
+    fun create(@RequestBody book: CreateBookRequest): CreateBookResponse {
+        return bookService.create(book).toCreateAPIResponse()
     }
 
     @GetMapping
-    fun findAll(@RequestParam name: String?): List<BookModel> {
+    fun findAll(@RequestParam name: String?): List<Book> {
         return bookService.findAll(name)
     }
 
     @GetMapping("/active")
-    fun findByActive(): List<BookModel> {
+    fun findByActive(): List<Book> {
         return bookService.findByActive()
     }
 
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: Int): BookModel {
+    fun findById(@PathVariable id: Int): Book {
         return bookService.findById(id)
     }
 
@@ -44,9 +47,14 @@ class BookController(
         return bookService.delete(id)
     }
 
-    @PutMapping("/{id}")
-    fun update(@PathVariable id: Int, @RequestBody book: PutBookRequest): BookModel {
-        val oldBook = bookService.findById(id)
-        return bookService.update(book.toBookModel(oldBook))
+    @PatchMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    fun enable(@PathVariable id: Int): Book {
+        return bookService.enable(id)
+    }
+
+    @PutMapping("/{identifier}")
+    fun update(@PathVariable identifier: UUID, @RequestBody book: UpdateBookRequest): UpdateBookResponse {
+
     }
 }
