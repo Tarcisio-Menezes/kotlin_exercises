@@ -1,9 +1,9 @@
 package com.mercadolivro.controller
 
-import com.mercadolivro.controller.request.PostCustomerRequest
-import com.mercadolivro.controller.request.PutCustomerRequest
+import com.mercadolivro.controller.request.CreateCustomerRequest
+import com.mercadolivro.controller.request.UpdateCustomerRequest
 import com.mercadolivro.extension.toCustomerModel
-import com.mercadolivro.model.CustomerModel
+import com.mercadolivro.model.Customer
 import com.mercadolivro.service.CustomerService
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
@@ -15,26 +15,31 @@ class CustomerController (
         ) {
 
     @GetMapping
-    fun getAll(@RequestParam name: String?): List<CustomerModel> {
+    fun getAll(@RequestParam name: String?): List<Customer> {
         return customerService.getAll(name)
     }
 
     @GetMapping("/{id}")
-    fun getCustomer(@PathVariable id: Int): CustomerModel? {
-        return customerService.getCustomerById(id)
+    fun getCustomer(@PathVariable id: Int): Customer? {
+        return customerService.getCustomerByIdentifierentifier(id)
+    }
+
+    @GetMapping("/active")
+    fun findByActive(): List<Customer> {
+        return customerService.findByActive()
     }
 
     @PutMapping("/{id}")
-    fun update(@PathVariable id: Int, @RequestBody customer: PutCustomerRequest): CustomerModel? {
+    fun update(@PathVariable id: Int, @RequestBody customer: UpdateCustomerRequest): Customer? {
         customerService.update(id, customer.toCustomerModel())
-        return CustomerModel(id, customer.name, customer.email)
+        return Customer(id, customer.name, customer.email)
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun create(@RequestBody customer: PostCustomerRequest): PostCustomerRequest {
+    fun create(@RequestBody customer: CreateCustomerRequest): CreateCustomerRequest {
         customerService.create(customer.toCustomerModel())
-        return PostCustomerRequest(customer.name, customer.email)
+        return CreateCustomerRequest(customer.name, customer.email)
     }
 
     @DeleteMapping("/{id}")
@@ -43,4 +48,9 @@ class CustomerController (
         return customerService.delete(id)
     }
 
+    @PatchMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    fun enable(@PathVariable id: Int): Customer {
+        return customerService.enable(id)
+    }
 }

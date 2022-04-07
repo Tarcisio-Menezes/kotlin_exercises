@@ -1,31 +1,39 @@
 package com.mercadolivro.extension
 
-import com.mercadolivro.controller.request.PostBookRequest
-import com.mercadolivro.controller.request.PostCustomerRequest
-import com.mercadolivro.controller.request.PutBookRequest
-import com.mercadolivro.controller.request.PutCustomerRequest
+import com.mercadolivro.controller.request.CreateBookRequest
+import com.mercadolivro.controller.request.CreateCustomerRequest
+import com.mercadolivro.controller.request.UpdateBookRequest
+import com.mercadolivro.controller.request.UpdateCustomerRequest
+import com.mercadolivro.controller.response.CreateBookResponse
+import com.mercadolivro.controller.response.CreateCustomerResponse
+import com.mercadolivro.controller.response.UpdateBookResponse
 import com.mercadolivro.enums.BookStatus
-import com.mercadolivro.model.BookModel
-import com.mercadolivro.model.CustomerModel
+import com.mercadolivro.model.Book
+import com.mercadolivro.model.Customer
+import java.util.*
 
-fun PostCustomerRequest.toCustomerModel(): CustomerModel {
-    return CustomerModel(name = this.name, email = this.email)
+fun CreateCustomerRequest.toCustomerModel(): CreateCustomerResponse {
+    return CreateCustomerResponse(
+        identifier = UUID.randomUUID(),
+        name = this.name,
+        email = this.email
+    )
 }
 
-fun PutCustomerRequest.toCustomerModel(): PutCustomerRequest {
-    return PutCustomerRequest(name = this.name, email = this.email)
+fun UpdateCustomerRequest.toCustomerModel(): UpdateCustomerRequest {
+    return UpdateCustomerRequest(
+        name = this.name,
+        email = this.email
+    )
 }
 
-fun PostBookRequest.toBookModel(customer: CustomerModel): BookModel {
-    return BookModel(name = this.name, price = this.price, status = BookStatus.ATIVO, customer = customer)
-}
-
-fun PutBookRequest.toBookModel(oldBook: BookModel): BookModel {
-    return BookModel(
-        id = oldBook.id,
+fun UpdateBookRequest.toBookModel(oldBook: Book): UpdateBookResponse {
+    return UpdateBookResponse(
+        identifier = oldBook.identifier,
         name = this.name ?: oldBook.name,
         price = this.price ?: oldBook.price,
-        status = oldBook.status,
-        customer = oldBook.customer
+        status = oldBook.status!!,
+        image = this.image ?: oldBook.image,
+        customer = oldBook.customer!!
     )
 }

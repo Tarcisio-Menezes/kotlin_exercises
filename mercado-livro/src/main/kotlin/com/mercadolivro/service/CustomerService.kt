@@ -1,11 +1,12 @@
 package com.mercadolivro.service
 
-import com.mercadolivro.controller.request.PostCustomerRequest
-import com.mercadolivro.controller.request.PutCustomerRequest
-import com.mercadolivro.model.CustomerModel
-import com.mercadolivro.repository.BookRepository
+import com.mercadolivro.controller.request.CreateCustomerRequest
+import com.mercadolivro.controller.request.UpdateCustomerRequest
+import com.mercadolivro.enums.CustomerStatus
+import com.mercadolivro.model.Customer
 import com.mercadolivro.repository.CustomerRepository
 import org.springframework.stereotype.Service
+import java.util.*
 
 @Service
 class CustomerService(
@@ -13,20 +14,26 @@ class CustomerService(
     val bookService: BookService
 ) {
 
-    fun getAll(name: String?): List<CustomerModel> {
+    fun getAll(name: String?): List<Customer> {
         name?.let {
-            return customerRepository.findByNameContaining(name)
+            return customerRepository.findByNameContaining(it)
         }
         return customerRepository.findAll().toList()
     }
 
-    fun getCustomerById(id: Int): CustomerModel {
-        return customerRepository.findById(id).orElseThrow()
+    fun findByActive(): List<Customer> {
+        return customerRepository.findByStatus(CustomerStatus.ENABLED)
     }
 
-    fun update(id: Int, customer: PutCustomerRequest): CustomerModel? {
+    fun getCustomerByIdentifier(identifier: UUID): Customer {
+        kotlin.runCatching {
+            return customerRepository.findByIdentifier(identifier)!!
+        }.getOrElse { throw Exception() }
+    }
+
+    fun update(id: Int, customer: UpdateCustomerRequest): Customer? {
         if (customerRepository.existsById(id)) {
-            val newCustomer: CustomerModel = CustomerModel(id, customer.name, customer.email)
+            val newCustomer = Customer(id, customer.name, customer.email)
             customerRepository.save(newCustomer)
             return newCustomer
         }
@@ -36,19 +43,30 @@ class CustomerService(
         }
     }
 
-    fun create(customer: CustomerModel): PostCustomerRequest {
+    fun create(customer: Customer): CreateCustomerRequest {
         customerRepository.save(customer)
-        return PostCustomerRequest(name = customer.name, email = customer.email)
+        return CreateCustomerRequest(name = customer.name, email = customer.email)
     }
 
     fun delete(id: Int) {
         if (customerRepository.existsById(id)) {
             kotlin.runCatching {
-                getCustomerById(id).apply { bookService.deleteByCustomer(this) }
-                return customerRepository.deleteById(id)
-            }
+                getCustomerByIdentifierentifier(id).apply {
+                    bookService.deleteByCustomer(this)
+                    customerRepository.save(this.copy(status = CustomerStatus.DISABLED))
+                }
+            }.getOrElse { throw Exception() }
         }
 
-        throw Exception()
+        else { throw Exception() }
+    }
+
+    fun enable(id: Int): Customer {
+        kotlin.runCatching {
+            val customer = getCustomerByIdentifier(id).apply {
+                customerRepository.save(this.copy(status = CustomerStatus.ENABLED))
+            }
+            return customer
+        }.getOrElse { throw Exception() }
     }
 }
