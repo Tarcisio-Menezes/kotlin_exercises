@@ -2,6 +2,8 @@ package com.mercadolivro.service
 
 import com.mercadolivro.controller.request.CreateCustomerRequest
 import com.mercadolivro.controller.request.UpdateCustomerRequest
+import com.mercadolivro.controller.request.toCustomerModel
+import com.mercadolivro.controller.response.CreateCustomerResponse
 import com.mercadolivro.enums.CustomerStatus
 import com.mercadolivro.model.Customer
 import com.mercadolivro.repository.CustomerRepository
@@ -15,37 +17,43 @@ class CustomerService(
 ) {
 
     fun getAll(name: String?): List<Customer> {
-        name?.let {
-            return customerRepository.findByNameContaining(it)
-        }
-        return customerRepository.findAll().toList()
+        runCatching {
+            name?.let {
+                return customerRepository.findByNameContaining(it)
+            }
+            return customerRepository.findAll().toList()
+        }.getOrElse { throw Exception() }
     }
 
     fun findByActive(): List<Customer> {
-        return customerRepository.findByStatus(CustomerStatus.ENABLED)
+        runCatching {
+            return customerRepository.findByStatus(CustomerStatus.ENABLED)
+        }.getOrElse { throw Exception() }
     }
 
     fun getCustomerByIdentifier(identifier: UUID): Customer {
-        kotlin.runCatching {
+        runCatching {
             return customerRepository.findByIdentifier(identifier)!!
         }.getOrElse { throw Exception() }
     }
 
-    fun update(id: Int, customer: UpdateCustomerRequest): Customer? {
-        if (customerRepository.existsById(id)) {
-            val newCustomer = Customer(id, customer.name, customer.email)
-            customerRepository.save(newCustomer)
-            return newCustomer
-        }
-
-        else {
-            throw Exception()
-        }
+    fun update(id: UUID, customer: UpdateCustomerRequest): Customer? {
+        return runCatching {
+            getCustomerByIdentifier(id).apply {
+                customerRepository.save(
+                    this.copy(
+                        name = customer.name,
+                        email = customer.email
+                    )
+                )
+            }
+            }.getOrElse { throw Exception() }
     }
 
-    fun create(customer: Customer): CreateCustomerRequest {
-        customerRepository.save(customer)
-        return CreateCustomerRequest(name = customer.name, email = customer.email)
+    fun create(customer: Customer): CreateCustomerResponse {
+        return runCatching {
+            customerRepository.save(customer.toCustomerModel()!!)
+        }.getOrElse { throw Exception() }
     }
 
     fun delete(id: Int) {
