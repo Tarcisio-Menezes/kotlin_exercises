@@ -6,18 +6,16 @@ import java.util.UUID
 
 class CreateBookResponse(
     val name: String,
-    val identifier: UUID,
     val status: BookStatus,
-    val price: Float,
+    val price: Int,
     val image: String,
-    val customerIdentifier: UUID
+    val customerId: Int
 )
 
 fun Book.toCreateAPIResponse() = CreateBookResponse(
     name = this.name,
-    identifier = this.identifier,
     status = this.status!!,
     price = this.price,
     image = this.image,
-    customerIdentifier = this.customer!!.identifier
+    customerId = this.customer!!.id!!
 )

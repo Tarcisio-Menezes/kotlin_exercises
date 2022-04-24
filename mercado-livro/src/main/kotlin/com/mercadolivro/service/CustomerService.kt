@@ -2,13 +2,10 @@ package com.mercadolivro.service
 
 import com.mercadolivro.controller.request.CreateCustomerRequest
 import com.mercadolivro.controller.request.UpdateCustomerRequest
-import com.mercadolivro.controller.request.toCustomerModel
-import com.mercadolivro.controller.response.CreateCustomerResponse
 import com.mercadolivro.enums.CustomerStatus
 import com.mercadolivro.model.Customer
 import com.mercadolivro.repository.CustomerRepository
 import org.springframework.stereotype.Service
-import java.util.*
 
 @Service
 class CustomerService(
@@ -31,17 +28,17 @@ class CustomerService(
         }.getOrElse { throw Exception() }
     }
 
-    fun getCustomerByIdentifier(identifier: UUID): Customer {
+    fun getCustomerById(id: Int): Customer? {
         runCatching {
-            return customerRepository.findByIdentifier(identifier)!!
+            return customerRepository.findCustomerById(id)
         }.getOrElse { throw Exception() }
     }
 
-    fun update(id: UUID, customer: UpdateCustomerRequest): Customer? {
+    fun update(id: Int, customer: UpdateCustomerRequest): Customer? {
         return runCatching {
-            getCustomerByIdentifier(id).apply {
+            getCustomerById(id).apply {
                 customerRepository.save(
-                    this.copy(
+                    this!!.copy(
                         name = customer.name,
                         email = customer.email
                     )
@@ -50,31 +47,27 @@ class CustomerService(
             }.getOrElse { throw Exception() }
     }
 
-    fun create(customer: Customer): CreateCustomerResponse {
+    fun create(customer: CreateCustomerRequest): Customer {
         return runCatching {
-            customerRepository.save(customer.toCustomerModel()!!)
+            customerRepository.save(customer.toCustomerModel())
         }.getOrElse { throw Exception() }
     }
 
     fun delete(id: Int) {
-        if (customerRepository.existsById(id)) {
-            kotlin.runCatching {
-                getCustomerByIdentifierentifier(id).apply {
-                    bookService.deleteByCustomer(this)
+        runCatching {
+            getCustomerById(id).apply {
+                    bookService.deleteByCustomer(this!!)
                     customerRepository.save(this.copy(status = CustomerStatus.DISABLED))
                 }
             }.getOrElse { throw Exception() }
-        }
-
-        else { throw Exception() }
     }
 
     fun enable(id: Int): Customer {
-        kotlin.runCatching {
-            val customer = getCustomerByIdentifier(id).apply {
-                customerRepository.save(this.copy(status = CustomerStatus.ENABLED))
+        runCatching {
+            val customer = getCustomerById(id).apply {
+                customerRepository.save(this!!.copy(status = CustomerStatus.ENABLED))
             }
-            return customer
+            return customer!!
         }.getOrElse { throw Exception() }
     }
 }

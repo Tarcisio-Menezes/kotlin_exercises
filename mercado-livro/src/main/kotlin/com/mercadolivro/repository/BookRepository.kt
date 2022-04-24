@@ -10,5 +10,5 @@ interface BookRepository : CrudRepository<Book, Int> {
     fun findByNameContaining(name: String): Collection<Book>
     fun findByStatus(status: BookStatus): Collection<Book>
     fun findByCustomer(customer: Customer): Collection<Book>
-    fun findByIdentifier(identifier: UUID): Book?
+    fun findBookById(id: Int): Book?
 }

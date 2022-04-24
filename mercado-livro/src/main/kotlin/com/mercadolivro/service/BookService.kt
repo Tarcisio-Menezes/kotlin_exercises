@@ -6,19 +6,19 @@ import com.mercadolivro.enums.BookStatus
 import com.mercadolivro.model.Book
 import com.mercadolivro.model.Customer
 import com.mercadolivro.repository.BookRepository
+import com.mercadolivro.repository.CustomerRepository
 import org.springframework.stereotype.Service
-import java.util.*
 
 @Service
 class BookService(
     val bookRepository: BookRepository,
-    val customerService: CustomerService
+    val customerRepository: CustomerRepository
 ) {
 
     fun create(book: CreateBookRequest): Book {
         runCatching {
-            customerService.getCustomerByIdentifier(book.customerIdentifier).let {
-                return book.toModelBook(it)
+            customerRepository.findCustomerById(book.customerId).let {
+                return book.toModelBook(it!!)
             }
         }.getOrElse { throw Exception() }
     }
@@ -42,28 +42,29 @@ class BookService(
         }
     }
 
-    fun findById(identifier: UUID): Book {
+    fun findById(id: Int): Book {
         runCatching {
-            return bookRepository.findByIdentifier(identifier)!!
+            return bookRepository.findBookById(id)!!
         }.getOrElse { throw Exception() }
     }
 
-    fun delete(identifier: UUID) {
+    fun delete(id: Int) {
         runCatching {
-            return bookRepository.findByIdentifier(identifier).let {
+            return bookRepository.findBookById(id).let {
                     book ->
                 bookRepository.save(book!!.copy(status = BookStatus.CANCELADO))
             }
         }.getOrElse { throw Exception() }
     }
 
-    fun update(identifier: UUID, book: UpdateBookRequest): Book {
+    fun update(id: Int, book: UpdateBookRequest): Book {
         return runCatching{
-            findById(identifier).apply {
+            findById(id).apply {
                 bookRepository.save(this.copy(
                     name = book.name ?: this.name,
                     image = book.image ?: this.image,
-                    price = book.price ?: this.price
+                    price = book.price ?: this.price,
+
                 ))
             }
         }.getOrElse {
@@ -71,9 +72,9 @@ class BookService(
         }
     }
 
-    fun enable(identifier: UUID): Book? {
+    fun enable(identifier: Int): Book? {
         return runCatching {
-            bookRepository.findByIdentifier(identifier).apply {
+            bookRepository.findBookById(identifier).apply {
                 bookRepository.save(this!!.copy(status = BookStatus.ATIVO))
             }
         }.getOrElse { throw Exception() }

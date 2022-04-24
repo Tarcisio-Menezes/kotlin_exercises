@@ -1,9 +1,14 @@
 package com.mercadolivro.controller.response
 
-import java.util.UUID
+import com.mercadolivro.model.Customer
 
 class CreateCustomerResponse(
-    val identifier: UUID,
     val name: String,
     val email: String
 )
+fun Customer.toAPIResponse(): CreateCustomerResponse {
+    return CreateCustomerResponse(
+        name = this.name,
+        email = this.email
+    )
+}

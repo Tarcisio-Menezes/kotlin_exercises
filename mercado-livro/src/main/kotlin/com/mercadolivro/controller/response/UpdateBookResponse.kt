@@ -7,16 +7,16 @@ import java.util.UUID
 
 class UpdateBookResponse(
     val name: String,
-    val identifier: UUID,
+    val id: Int,
     val status: BookStatus,
-    val price: Float,
+    val price: Int,
     val image: String,
     val customer: Customer
 )
 
 fun Book.toUpdateAPIResponse() = UpdateBookResponse(
     name = this.name,
-    identifier = this.identifier,
+    id = this.id!!,
     status = this.status!!,
     price = this.price,
     image = this.image,

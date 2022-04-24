@@ -2,7 +2,10 @@ package com.mercadolivro.controller
 
 import com.mercadolivro.controller.request.CreateCustomerRequest
 import com.mercadolivro.controller.request.UpdateCustomerRequest
-import com.mercadolivro.extension.toCustomerModel
+import com.mercadolivro.controller.response.CreateCustomerResponse
+import com.mercadolivro.controller.response.UpdateCustomerResponse
+import com.mercadolivro.controller.response.toAPIResponse
+import com.mercadolivro.controller.response.toUpdateAPIResponse
 import com.mercadolivro.model.Customer
 import com.mercadolivro.service.CustomerService
 import org.springframework.http.HttpStatus
@@ -13,16 +16,15 @@ import java.util.UUID
 @RequestMapping("customer")
 class CustomerController (
     val customerService: CustomerService
-        ) {
-
+    ) {
     @GetMapping
     fun getAll(@RequestParam name: String?): List<Customer> {
         return customerService.getAll(name)
     }
 
-    @GetMapping("/{identifier}")
-    fun getCustomer(@PathVariable id: UUID): Customer? {
-        return customerService.getCustomerByIdentifier(id)
+    @GetMapping("/{id}")
+    fun getCustomer(@PathVariable id: Int): Customer? {
+        return customerService.getCustomerById(id)
     }
 
     @GetMapping("/active")
@@ -31,16 +33,14 @@ class CustomerController (
     }
 
     @PutMapping("/{id}")
-    fun update(@PathVariable id: UUID, @RequestBody customer: UpdateCustomerRequest): Customer? {
-        customerService.update(id, customer.toCustomerModel())
-        return Customer(id, customer.name, customer.email)
+    fun update(@PathVariable id: Int, @RequestBody customer: UpdateCustomerRequest): UpdateCustomerResponse {
+        return customerService.update(id, customer)!!.toUpdateAPIResponse()
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun create(@RequestBody customer: CreateCustomerRequest): CreateCustomerRequest {
-        customerService.create(customer.toCustomerModel())
-        return CreateCustomerRequest(customer.name, customer.email)
+    fun create(@RequestBody customer: CreateCustomerRequest): CreateCustomerResponse {
+        return customerService.create(customer).toAPIResponse()
     }
 
     @DeleteMapping("/{id}")

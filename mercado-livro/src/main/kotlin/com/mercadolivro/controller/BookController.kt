@@ -37,24 +37,24 @@ class BookController(
     }
 
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: UUID): Book {
+    fun findById(@PathVariable id: Int): Book {
         return bookService.findById(id)
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun delete(@PathVariable id: UUID) {
+    fun delete(@PathVariable id: Int) {
         return bookService.delete(id)
     }
 
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    fun enable(@PathVariable id: UUID): Book {
+    fun enable(@PathVariable id: Int): Book {
         return bookService.enable(id)!!
     }
 
-    @PutMapping("/{identifier}")
-    fun update(@PathVariable identifier: UUID, @RequestBody book: UpdateBookRequest): UpdateBookResponse {
-        return bookService.update(identifier, book).toUpdateAPIResponse()
+    @PutMapping("/{id}")
+    fun update(@PathVariable id: Int, @RequestBody book: UpdateBookRequest): UpdateBookResponse {
+        return bookService.update(id, book).toUpdateAPIResponse()
     }
 }
