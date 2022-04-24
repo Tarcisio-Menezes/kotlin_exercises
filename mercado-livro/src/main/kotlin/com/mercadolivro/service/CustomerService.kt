@@ -3,6 +3,7 @@ package com.mercadolivro.service
 import com.mercadolivro.controller.request.CreateCustomerRequest
 import com.mercadolivro.controller.request.UpdateCustomerRequest
 import com.mercadolivro.enums.CustomerStatus
+import com.mercadolivro.exceptions.customer.*
 import com.mercadolivro.model.Customer
 import com.mercadolivro.repository.CustomerRepository
 import org.springframework.stereotype.Service
@@ -19,55 +20,74 @@ class CustomerService(
                 return customerRepository.findByNameContaining(it)
             }
             return customerRepository.findAll().toList()
-        }.getOrElse { throw Exception() }
+        }.getOrElse { throw CustomerGetException(message = "No author corresponding search!") }
     }
 
     fun findByActive(): List<Customer> {
         runCatching {
             return customerRepository.findByStatus(CustomerStatus.ENABLED)
-        }.getOrElse { throw Exception() }
+        }.getOrElse { throw CustomerFindByActiveException(message = "Error in finding process! Try again!") }
     }
 
     fun getCustomerById(id: Int): Customer? {
         runCatching {
             return customerRepository.findCustomerById(id)
-        }.getOrElse { throw Exception() }
+        }.getOrElse { throw CustomerGetByIdException(message = "Error in finding by id! Try again!") }
     }
 
     fun update(id: Int, customer: UpdateCustomerRequest): Customer? {
-        return runCatching {
-            getCustomerById(id).apply {
-                customerRepository.save(
-                    this!!.copy(
-                        name = customer.name,
-                        email = customer.email
-                    )
-                )
+        runCatching {
+            return when(val customerById = getCustomerById(id)) {
+                null -> throw CustomerUpdateException(message = "Author not found. Not could be updated!")
+                else -> {
+                    customerById.apply {
+                        customerRepository.save(
+                            this.copy(
+                                name = customer.name,
+                                email = customer.email
+                            )
+                        )
+                    }
+                }
             }
-            }.getOrElse { throw Exception() }
+        }.getOrElse { throw CustomerUpdateException(message = "Error in updating process! Try again!") }
     }
 
     fun create(customer: CreateCustomerRequest): Customer {
-        return runCatching {
-            customerRepository.save(customer.toCustomerModel())
-        }.getOrElse { throw Exception() }
+        runCatching {
+            return when(customerRepository.findByEmail(customer.email)) {
+                null -> {
+                    customerRepository.save(customer.toCustomerModel())
+                }
+                else -> throw CustomerCreationValidationException(message = "\n" +
+                        "Author already registered")
+            }
+
+        }.getOrElse { throw CustomerCreationException(message = "Error in creation process Author. Detail:" + it.message, it) }
     }
 
     fun delete(id: Int) {
         runCatching {
-            getCustomerById(id).apply {
-                    bookService.deleteByCustomer(this!!)
-                    customerRepository.save(this.copy(status = CustomerStatus.DISABLED))
+            when(val customer = getCustomerById(id)) {
+                null -> throw CustomerDeleteException(message = "Author not found. Could not be deleted!")
+                else -> {
+                    customer.apply {
+                        bookService.deleteByCustomer(this)
+                        customerRepository.save(this.copy(status = CustomerStatus.DISABLED))
+                    }
                 }
-            }.getOrElse { throw Exception() }
+            }
+        }.getOrElse { throw CustomerDeleteException(message = "Error in deleted process Author. Detail:" + it.message) }
     }
 
     fun enable(id: Int): Customer {
         runCatching {
-            val customer = getCustomerById(id).apply {
-                customerRepository.save(this!!.copy(status = CustomerStatus.ENABLED))
+            return when(val customer = getCustomerById(id)) {
+                null -> throw CustomerEnableException(message = "Author not found. Could not be enabled!")
+                else -> customer.apply {
+                customerRepository.save(this.copy(status = CustomerStatus.ENABLED))
+                }
             }
-            return customer!!
-        }.getOrElse { throw Exception() }
+        }.getOrElse { throw CustomerEnableException(message = "Error in enabled process Author. Detail:" + it.message) }
     }
 }
