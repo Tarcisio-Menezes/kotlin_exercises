@@ -1,8 +1,8 @@
 package com.mercadolivro.controller.response
 
-import com.mercadolivro.model.Customer
+import com.mercadolivro.entitys.Customer
 
-class CreateCustomerResponse(
+data class CreateCustomerResponse(
     val name: String,
     val email: String
 )

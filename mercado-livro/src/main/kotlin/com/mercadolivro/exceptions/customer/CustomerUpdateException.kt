@@ -1,3 +1,3 @@
 package com.mercadolivro.exceptions.customer
 
-open class CustomerUpdateException(message: String?) : RuntimeException(message)
+class CustomerUpdateException (message: String?, cause: Throwable? = null) : RuntimeException(message, cause)

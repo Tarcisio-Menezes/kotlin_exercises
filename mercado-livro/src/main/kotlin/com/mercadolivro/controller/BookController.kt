@@ -3,20 +3,21 @@ package com.mercadolivro.controller
 import com.mercadolivro.controller.request.CreateBookRequest
 import com.mercadolivro.controller.request.UpdateBookRequest
 import com.mercadolivro.controller.response.CreateBookResponse
+import com.mercadolivro.controller.response.FindBookResponse
 import com.mercadolivro.controller.response.UpdateBookResponse
 import com.mercadolivro.controller.response.toCreateAPIResponse
+import com.mercadolivro.controller.response.toGetAPIResponse
 import com.mercadolivro.controller.response.toUpdateAPIResponse
-import com.mercadolivro.model.Book
+import com.mercadolivro.entitys.Book
 import com.mercadolivro.service.BookService
 import com.mercadolivro.service.CustomerService
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
-import java.util.UUID
+import java.util.Collections
 
 @RestController
 @RequestMapping("book")
 class BookController(
-    val customerService: CustomerService,
     val bookService : BookService
 ) {
 
@@ -27,18 +28,18 @@ class BookController(
     }
 
     @GetMapping
-    fun findAll(@RequestParam name: String?): Collection<Book> {
-        return bookService.findAll(name)
+    fun findAll(@RequestParam name: String?): Collection<FindBookResponse> {
+        return bookService.findAll(name).toGetAPIResponse()
     }
 
     @GetMapping("/active")
-    fun findByActive(): Collection<Book> {
-        return bookService.findByActive()
+    fun findByActive(): Collection<FindBookResponse> {
+        return bookService.findByActive().toGetAPIResponse()
     }
 
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: Int): Book {
-        return bookService.findById(id)
+    fun findById(@PathVariable id: Int): FindBookResponse {
+        return bookService.findById(id).toGetAPIResponse()
     }
 
     @DeleteMapping("/{id}")
@@ -49,8 +50,8 @@ class BookController(
 
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    fun enable(@PathVariable id: Int): Book {
-        return bookService.enable(id)!!
+    fun enable(@PathVariable id: Int): UpdateBookResponse {
+        return bookService.enable(id).toUpdateAPIResponse()
     }
 
     @PutMapping("/{id}")

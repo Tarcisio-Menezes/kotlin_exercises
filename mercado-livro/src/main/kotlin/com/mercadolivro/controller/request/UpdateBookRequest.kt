@@ -4,7 +4,7 @@ import com.mercadolivro.enums.BookStatus
 
 data class UpdateBookRequest(
     val name: String? = null,
-    val price: Int? = null,
+    val price: Double? = null,
     val image: String? = null,
     val status: BookStatus? = null,
 )

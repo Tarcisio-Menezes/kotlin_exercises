@@ -1,16 +1,14 @@
 package com.mercadolivro.controller.response
 
-import com.mercadolivro.model.Customer
+import com.mercadolivro.entitys.Customer
 
 data class UpdateCustomerResponse(
-    val id: Int,
     val name: String,
     val email: String
 )
 
 fun Customer.toUpdateAPIResponse(): UpdateCustomerResponse {
    return UpdateCustomerResponse(
-       id = this.id!!,
        name = this.name,
        email = this.email
    )

@@ -1,11 +1,12 @@
 package com.mercadolivro.controller.request
 
-import com.mercadolivro.model.Book
-import com.mercadolivro.model.Customer
+import com.mercadolivro.entitys.Book
+import com.mercadolivro.entitys.Customer
+import java.time.Instant
 
 data class CreateBookRequest(
     val name: String,
-    val price: Int,
+    val price: Double,
     val image: String,
     val customerId: Int
 ) {
@@ -14,7 +15,8 @@ data class CreateBookRequest(
             name = this.name,
             price = this.price,
             image = this.image,
-            customer = customer
+            customer = customer,
+            createdAt = Instant.now()
         )
     }
 }
