@@ -1,23 +1,20 @@
 package com.mercadolivro.controller.response
 
 import com.mercadolivro.enums.BookStatus
-import com.mercadolivro.model.Book
-import java.util.UUID
+import com.mercadolivro.entitys.Book
 
 class CreateBookResponse(
     val name: String,
-    val identifier: UUID,
     val status: BookStatus,
-    val price: Float,
+    val price: Double,
     val image: String,
-    val customerIdentifier: UUID
+    val customerId: Int
 )
 
 fun Book.toCreateAPIResponse() = CreateBookResponse(
     name = this.name,
-    identifier = this.identifier,
     status = this.status!!,
     price = this.price,
     image = this.image,
-    customerIdentifier = this.customer!!.identifier
+    customerId = this.customer!!.id!!
 )

@@ -2,8 +2,13 @@ package com.mercadolivro.controller
 
 import com.mercadolivro.controller.request.CreateCustomerRequest
 import com.mercadolivro.controller.request.UpdateCustomerRequest
-import com.mercadolivro.extension.toCustomerModel
-import com.mercadolivro.model.Customer
+import com.mercadolivro.controller.response.CreateCustomerResponse
+import com.mercadolivro.controller.response.FindCustomerResponse
+import com.mercadolivro.controller.response.UpdateCustomerResponse
+import com.mercadolivro.controller.response.toAPIResponse
+import com.mercadolivro.controller.response.toGetResponse
+import com.mercadolivro.controller.response.toUpdateAPIResponse
+import com.mercadolivro.entitys.Customer
 import com.mercadolivro.service.CustomerService
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
@@ -12,34 +17,31 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("customer")
 class CustomerController (
     val customerService: CustomerService
-        ) {
-
+    ) {
     @GetMapping
-    fun getAll(@RequestParam name: String?): List<Customer> {
-        return customerService.getAll(name)
+    fun getAll(@RequestParam name: String?): Collection<FindCustomerResponse> {
+        return customerService.getAll(name).toGetResponse()
     }
 
     @GetMapping("/{id}")
-    fun getCustomer(@PathVariable id: Int): Customer? {
-        return customerService.getCustomerByIdentifierentifier(id)
+    fun getCustomer(@PathVariable id: Int): FindCustomerResponse {
+        return customerService.getCustomerById(id).toGetResponse()
     }
 
     @GetMapping("/active")
-    fun findByActive(): List<Customer> {
-        return customerService.findByActive()
+    fun findByActive(): Collection<FindCustomerResponse> {
+        return customerService.findByActive().toGetResponse()
     }
 
     @PutMapping("/{id}")
-    fun update(@PathVariable id: Int, @RequestBody customer: UpdateCustomerRequest): Customer? {
-        customerService.update(id, customer.toCustomerModel())
-        return Customer(id, customer.name, customer.email)
+    fun update(@PathVariable id: Int, @RequestBody customer: UpdateCustomerRequest): UpdateCustomerResponse {
+        return customerService.update(id, customer).toUpdateAPIResponse()
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun create(@RequestBody customer: CreateCustomerRequest): CreateCustomerRequest {
-        customerService.create(customer.toCustomerModel())
-        return CreateCustomerRequest(customer.name, customer.email)
+    fun create(@RequestBody customer: CreateCustomerRequest): CreateCustomerResponse {
+        return customerService.create(customer).toAPIResponse()
     }
 
     @DeleteMapping("/{id}")
@@ -50,7 +52,7 @@ class CustomerController (
 
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    fun enable(@PathVariable id: Int): Customer {
-        return customerService.enable(id)
+    fun enable(@PathVariable id: Int): UpdateCustomerResponse {
+        return customerService.enable(id).toUpdateAPIResponse()
     }
 }
