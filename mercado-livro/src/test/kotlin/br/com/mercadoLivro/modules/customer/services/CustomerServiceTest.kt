@@ -1,4 +1,4 @@
-package br.com.mercadoLivro.modules
+package br.com.mercadoLivro.modules.customer.services
 
 import br.com.mercadoLivro.UnitTests
 import br.com.mercadoLivro.mock.CustomerMock

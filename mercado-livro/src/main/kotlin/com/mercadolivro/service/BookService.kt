@@ -34,11 +34,10 @@ class BookService(
     }
 
     fun findAll(name: String?): Collection<Book> {
-        runCatching {
+        return runCatching {
             name?.let {
                 bookRepository.findByNameContaining(name)
-            }
-            return bookRepository.findAll().toList()
+            } ?: bookRepository.findAll().toList()
         }.getOrElse {
             throw BookGetException(notFindBook)
         }
@@ -68,12 +67,12 @@ class BookService(
 
     fun update(id: Int, book: UpdateBookRequest): Book {
         return runCatching{
-            this.findById(id).apply {
+            this.findById(id).let {
                 bookRepository.save(
-                    this.copy(
-                        name = book.name ?: this.name,
-                        image = book.image ?: this.image,
-                        price = book.price ?: this.price,
+                    it.copy(
+                        name = book.name ?: it.name,
+                        image = book.image ?: it.image,
+                        price = book.price ?: it.price,
                         updatedAt = Instant.now()
                     ))
             }
@@ -85,8 +84,8 @@ class BookService(
     fun enable(identifier: Int): Book {
         return runCatching {
             bookRepository.findBookById(identifier)!!
-                .apply {
-                bookRepository.save(this.copy(status = BookStatus.ATIVO))
+                .let {
+                bookRepository.save(it.copy(status = BookStatus.ATIVO))
             }
         }.getOrElse { throw BookEnabledException("Could not enable book " + it.message) }
     }
