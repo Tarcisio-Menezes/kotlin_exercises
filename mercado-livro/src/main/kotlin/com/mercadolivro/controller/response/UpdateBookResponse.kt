@@ -1,8 +1,8 @@
 package com.mercadolivro.controller.response
 
-import com.mercadolivro.enums.BookStatus
 import com.mercadolivro.entitys.Book
 import com.mercadolivro.entitys.Customer
+import com.mercadolivro.enums.BookStatus
 
 data class UpdateBookResponse(
     val name: String,

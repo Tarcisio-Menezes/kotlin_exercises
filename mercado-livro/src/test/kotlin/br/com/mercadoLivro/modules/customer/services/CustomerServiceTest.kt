@@ -171,7 +171,6 @@ internal class CustomerServiceTest(
             every { customerRepository.findCustomerById(any()) } returns validCustomer
             every { customerRepository.save(any()) } returns validCustomer
 
-
             val result = customerService.update(1, updateRequest)
 
             assertEquals(validCustomer.name, result.name)
@@ -229,9 +228,9 @@ internal class CustomerServiceTest(
         internal fun `should throw exception when not find customer to disable`() {
             every { customerRepository.findCustomerById(any()) } returns null
 
-             assertThrows<CustomerDeleteException> {
-                 customerService.delete(1)
-             }
+            assertThrows<CustomerDeleteException> {
+                customerService.delete(1)
+            }
 
             verify(inverse = true) { customerRepository.save(any()) }
             verify(inverse = true) { bookService.deleteByCustomer(any()) }

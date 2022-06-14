@@ -1,7 +1,7 @@
 package com.mercadolivro.repository
 
-import com.mercadolivro.enums.CustomerStatus
 import com.mercadolivro.entitys.Customer
+import com.mercadolivro.enums.CustomerStatus
 import org.springframework.data.repository.CrudRepository
 
 interface CustomerRepository : CrudRepository<Customer, Int> {

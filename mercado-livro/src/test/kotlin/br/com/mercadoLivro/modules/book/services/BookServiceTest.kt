@@ -3,11 +3,8 @@ package br.com.mercadoLivro.modules.book.services
 import br.com.mercadoLivro.UnitTests
 import br.com.mercadoLivro.mock.BookMock
 import br.com.mercadoLivro.mock.CustomerMock
-import com.github.tomakehurst.wiremock.common.Strings
 import com.mercadolivro.controller.request.CreateBookRequest
 import com.mercadolivro.controller.request.UpdateBookRequest
-import com.mercadolivro.entitys.Book
-import com.mercadolivro.enums.BookStatus
 import com.mercadolivro.exceptions.book.BookCreationException
 import com.mercadolivro.exceptions.book.BookDeleteException
 import com.mercadolivro.exceptions.book.BookEnabledException
@@ -19,14 +16,12 @@ import com.mercadolivro.service.BookService
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import io.mockk.justRun
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.EnumSource
 import org.junit.jupiter.params.provider.ValueSource
 import kotlin.test.assertEquals
 
@@ -75,7 +70,7 @@ internal class BookServiceTest(
                 bookService.create(request)
             }
 
-            verify(inverse = true) { bookRepository.save(any())  }
+            verify(inverse = true) { bookRepository.save(any()) }
             confirmVerified()
         }
     }

@@ -2,10 +2,9 @@ package com.mercadolivro.service
 
 import com.mercadolivro.controller.request.CreateBookRequest
 import com.mercadolivro.controller.request.UpdateBookRequest
-import com.mercadolivro.controller.response.toGetAPIResponse
-import com.mercadolivro.enums.BookStatus
 import com.mercadolivro.entitys.Book
 import com.mercadolivro.entitys.Customer
+import com.mercadolivro.enums.BookStatus
 import com.mercadolivro.exceptions.book.BookCreationException
 import com.mercadolivro.exceptions.book.BookDeleteException
 import com.mercadolivro.exceptions.book.BookEnabledException
@@ -66,7 +65,7 @@ class BookService(
     }
 
     fun update(id: Int, book: UpdateBookRequest): Book {
-        return runCatching{
+        return runCatching {
             this.findById(id).let {
                 bookRepository.save(
                     it.copy(
@@ -74,7 +73,8 @@ class BookService(
                         image = book.image ?: it.image,
                         price = book.price ?: it.price,
                         updatedAt = Instant.now()
-                    ))
+                    )
+                )
             }
         }.getOrElse {
             throw BookUpdateException("Unexpected error in update book " + it.message)
@@ -85,8 +85,8 @@ class BookService(
         return runCatching {
             bookRepository.findBookById(identifier)!!
                 .let {
-                bookRepository.save(it.copy(status = BookStatus.ATIVO))
-            }
+                    bookRepository.save(it.copy(status = BookStatus.ATIVO))
+                }
         }.getOrElse { throw BookEnabledException("Could not enable book " + it.message) }
     }
 
@@ -94,7 +94,8 @@ class BookService(
         runCatching {
             val books = bookRepository.findByCustomer(customer)
             books.map {
-                    book -> bookRepository.save(book.copy(status = BookStatus.DELETADO))
+                book ->
+                bookRepository.save(book.copy(status = BookStatus.DELETADO))
             }
         }.getOrElse { throw BookDeleteException(notFindAssociateCustomer) }
     }

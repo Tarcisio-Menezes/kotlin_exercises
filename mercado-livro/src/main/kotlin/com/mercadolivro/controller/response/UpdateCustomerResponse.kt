@@ -8,8 +8,8 @@ data class UpdateCustomerResponse(
 )
 
 fun Customer.toUpdateAPIResponse(): UpdateCustomerResponse {
-   return UpdateCustomerResponse(
-       name = this.name,
-       email = this.email
-   )
+    return UpdateCustomerResponse(
+        name = this.name,
+        email = this.email
+    )
 }

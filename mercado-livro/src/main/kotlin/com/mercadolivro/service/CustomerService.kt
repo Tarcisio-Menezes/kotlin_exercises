@@ -2,9 +2,9 @@ package com.mercadolivro.service
 
 import com.mercadolivro.controller.request.CreateCustomerRequest
 import com.mercadolivro.controller.request.UpdateCustomerRequest
+import com.mercadolivro.entitys.Customer
 import com.mercadolivro.enums.CustomerStatus
 import com.mercadolivro.exceptions.customer.*
-import com.mercadolivro.entitys.Customer
 import com.mercadolivro.repository.CustomerRepository
 import org.springframework.stereotype.Service
 
@@ -56,13 +56,12 @@ class CustomerService(
 
     fun create(customer: CreateCustomerRequest): Customer {
         runCatching {
-            return when(customerRepository.findByEmail(customer.email)) {
+            return when (customerRepository.findByEmail(customer.email)) {
                 null -> {
                     customerRepository.save(customer.toCustomerModel())
                 }
                 else -> throw CustomerCreationValidationException("Author already registered")
             }
-
         }.getOrElse { throw it }
     }
 
@@ -85,7 +84,7 @@ class CustomerService(
             return when (val customer = customerRepository.findCustomerById(id)) {
                 null -> throw CustomerEnableException("$notFindingAuthor. Could not be enabled!")
                 else -> customer.apply {
-                customerRepository.save(this.copy(status = CustomerStatus.ENABLED))
+                    customerRepository.save(this.copy(status = CustomerStatus.ENABLED))
                 }
             }
         }.getOrElse { throw CustomerEnableException("Error in enabled process Author. Detail: " + it.message) }

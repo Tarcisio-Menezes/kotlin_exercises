@@ -12,4 +12,4 @@ fun Customer.toGetResponse() = FindCustomerResponse(
     email = this.email
 )
 
-fun Collection<Customer>. toGetResponse() = this.map { it.toGetResponse() }
+fun Collection<Customer>.toGetResponse() = this.map { it.toGetResponse() }
