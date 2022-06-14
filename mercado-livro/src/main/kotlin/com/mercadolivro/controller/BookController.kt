@@ -8,17 +8,14 @@ import com.mercadolivro.controller.response.UpdateBookResponse
 import com.mercadolivro.controller.response.toCreateAPIResponse
 import com.mercadolivro.controller.response.toGetAPIResponse
 import com.mercadolivro.controller.response.toUpdateAPIResponse
-import com.mercadolivro.entitys.Book
 import com.mercadolivro.service.BookService
-import com.mercadolivro.service.CustomerService
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
-import java.util.Collections
 
 @RestController
 @RequestMapping("book")
 class BookController(
-    val bookService : BookService
+    val bookService: BookService
 ) {
 
     @PostMapping

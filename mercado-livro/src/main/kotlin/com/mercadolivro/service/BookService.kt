@@ -2,10 +2,9 @@ package com.mercadolivro.service
 
 import com.mercadolivro.controller.request.CreateBookRequest
 import com.mercadolivro.controller.request.UpdateBookRequest
-import com.mercadolivro.controller.response.toGetAPIResponse
-import com.mercadolivro.enums.BookStatus
 import com.mercadolivro.entitys.Book
 import com.mercadolivro.entitys.Customer
+import com.mercadolivro.enums.BookStatus
 import com.mercadolivro.exceptions.book.BookCreationException
 import com.mercadolivro.exceptions.book.BookDeleteException
 import com.mercadolivro.exceptions.book.BookEnabledException
@@ -34,11 +33,10 @@ class BookService(
     }
 
     fun findAll(name: String?): Collection<Book> {
-        runCatching {
+        return runCatching {
             name?.let {
                 bookRepository.findByNameContaining(name)
-            }
-            return bookRepository.findAll().toList()
+            } ?: bookRepository.findAll().toList()
         }.getOrElse {
             throw BookGetException(notFindBook)
         }
@@ -67,15 +65,16 @@ class BookService(
     }
 
     fun update(id: Int, book: UpdateBookRequest): Book {
-        return runCatching{
-            this.findById(id).apply {
+        return runCatching {
+            this.findById(id).let {
                 bookRepository.save(
-                    this.copy(
-                        name = book.name ?: this.name,
-                        image = book.image ?: this.image,
-                        price = book.price ?: this.price,
+                    it.copy(
+                        name = book.name ?: it.name,
+                        image = book.image ?: it.image,
+                        price = book.price ?: it.price,
                         updatedAt = Instant.now()
-                    ))
+                    )
+                )
             }
         }.getOrElse {
             throw BookUpdateException("Unexpected error in update book " + it.message)
@@ -85,9 +84,9 @@ class BookService(
     fun enable(identifier: Int): Book {
         return runCatching {
             bookRepository.findBookById(identifier)!!
-                .apply {
-                bookRepository.save(this.copy(status = BookStatus.ATIVO))
-            }
+                .let {
+                    bookRepository.save(it.copy(status = BookStatus.ATIVO))
+                }
         }.getOrElse { throw BookEnabledException("Could not enable book " + it.message) }
     }
 
@@ -95,7 +94,8 @@ class BookService(
         runCatching {
             val books = bookRepository.findByCustomer(customer)
             books.map {
-                    book -> bookRepository.save(book.copy(status = BookStatus.DELETADO))
+                book ->
+                bookRepository.save(book.copy(status = BookStatus.DELETADO))
             }
         }.getOrElse { throw BookDeleteException(notFindAssociateCustomer) }
     }

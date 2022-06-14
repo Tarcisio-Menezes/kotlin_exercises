@@ -2,9 +2,9 @@ package com.mercadolivro.service
 
 import com.mercadolivro.controller.request.CreateCustomerRequest
 import com.mercadolivro.controller.request.UpdateCustomerRequest
+import com.mercadolivro.entitys.Customer
 import com.mercadolivro.enums.CustomerStatus
 import com.mercadolivro.exceptions.customer.*
-import com.mercadolivro.entitys.Customer
 import com.mercadolivro.repository.CustomerRepository
 import org.springframework.stereotype.Service
 
@@ -14,31 +14,32 @@ class CustomerService(
     val bookService: BookService
 ) {
 
-    fun getAll(name: String?): List<Customer> {
-        runCatching {
+    private val notFindingAuthor = "No author corresponding search!"
+
+    fun getAll(name: String?): Collection<Customer> {
+        return runCatching {
             name?.let {
                 customerRepository.findByNameContaining(it)
-            }
-            return customerRepository.findAll().toList()
-        }.getOrElse { throw CustomerGetException("No author corresponding search!") }
+            } ?: customerRepository.findAll().toList()
+        }.getOrElse { throw CustomerGetException(notFindingAuthor) }
     }
 
     fun findByActive(): List<Customer> {
         return runCatching {
             customerRepository.findByStatus(CustomerStatus.ENABLED)
-        }.getOrElse { throw CustomerFindByActiveException("Error in finding process! Try again!") }
+        }.getOrElse { throw CustomerFindByActiveException(notFindingAuthor) }
     }
 
     fun getCustomerById(id: Int): Customer {
         return runCatching {
             customerRepository.findCustomerById(id)!!
-        }.getOrElse { throw CustomerGetByIdException("Error in finding by id! Try again!") }
+        }.getOrElse { throw CustomerGetByIdException(notFindingAuthor) }
     }
 
     fun update(id: Int, customer: UpdateCustomerRequest): Customer {
         runCatching {
-            return when (val customerById = this.getCustomerById(id)) {
-                null -> throw CustomerUpdateException("Author not found. Not could be updated!")
+            return when (val customerById = customerRepository.findCustomerById(id)) {
+                null -> throw CustomerUpdateException("$notFindingAuthor. Not could be updated!")
                 else -> {
                     customerById.apply {
                         customerRepository.save(
@@ -55,20 +56,19 @@ class CustomerService(
 
     fun create(customer: CreateCustomerRequest): Customer {
         runCatching {
-            return when(customerRepository.findByEmail(customer.email)) {
+            return when (customerRepository.findByEmail(customer.email)) {
                 null -> {
                     customerRepository.save(customer.toCustomerModel())
                 }
                 else -> throw CustomerCreationValidationException("Author already registered")
             }
-
         }.getOrElse { throw it }
     }
 
     fun delete(id: Int) {
         runCatching {
-            when (val customer = getCustomerById(id)) {
-                null -> throw CustomerDeleteException("Author not found. Could not be deleted!")
+            when (val customer = customerRepository.findCustomerById(id)) {
+                null -> throw CustomerDeleteException("$notFindingAuthor. Could not be deleted!")
                 else -> {
                     customer.apply {
                         bookService.deleteByCustomer(this)
@@ -81,10 +81,10 @@ class CustomerService(
 
     fun enable(id: Int): Customer {
         runCatching {
-            return when(val customer = getCustomerById(id)) {
-                null -> throw CustomerEnableException("Author not found. Could not be enabled!")
+            return when (val customer = customerRepository.findCustomerById(id)) {
+                null -> throw CustomerEnableException("$notFindingAuthor. Could not be enabled!")
                 else -> customer.apply {
-                customerRepository.save(this.copy(status = CustomerStatus.ENABLED))
+                    customerRepository.save(this.copy(status = CustomerStatus.ENABLED))
                 }
             }
         }.getOrElse { throw CustomerEnableException("Error in enabled process Author. Detail: " + it.message) }

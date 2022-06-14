@@ -1,3 +1,3 @@
 package com.mercadolivro.exceptions.customer
 
-class CustomerEnableException (message: String?) : RuntimeException(message)
+class CustomerEnableException(message: String?) : RuntimeException(message)

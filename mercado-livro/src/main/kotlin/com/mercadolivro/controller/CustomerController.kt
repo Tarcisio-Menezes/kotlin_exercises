@@ -8,16 +8,15 @@ import com.mercadolivro.controller.response.UpdateCustomerResponse
 import com.mercadolivro.controller.response.toAPIResponse
 import com.mercadolivro.controller.response.toGetResponse
 import com.mercadolivro.controller.response.toUpdateAPIResponse
-import com.mercadolivro.entitys.Customer
 import com.mercadolivro.service.CustomerService
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("customer")
-class CustomerController (
+class CustomerController(
     val customerService: CustomerService
-    ) {
+) {
     @GetMapping
     fun getAll(@RequestParam name: String?): Collection<FindCustomerResponse> {
         return customerService.getAll(name).toGetResponse()
