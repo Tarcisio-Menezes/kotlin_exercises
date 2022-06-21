@@ -1,7 +1,7 @@
 package br.com.mercadoLivro.mock
 
-import com.mercadolivro.entitys.Customer
-import com.mercadolivro.enums.CustomerStatus.*
+import com.mercadolivro.modules.customer.dataproviders.jpa.entities.Customer
+import com.mercadolivro.modules.customer.enums.CustomerStatus.*
 
 class CustomerMock {
 
