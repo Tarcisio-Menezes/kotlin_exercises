@@ -2,16 +2,16 @@ package com.mercadolivro.common.exceptions.handler
 
 import com.mercadolivro.common.exceptions.CreationException
 import com.mercadolivro.common.exceptions.CreationValidationException
-import com.mercadolivro.exceptions.book.BookDeleteException
-import com.mercadolivro.exceptions.book.BookEnabledException
-import com.mercadolivro.exceptions.book.BookGetException
-import com.mercadolivro.exceptions.book.BookUpdateException
-import com.mercadolivro.exceptions.customer.CustomerDeleteException
-import com.mercadolivro.exceptions.customer.CustomerEnableException
-import com.mercadolivro.exceptions.customer.CustomerFindByActiveException
-import com.mercadolivro.exceptions.customer.CustomerGetByIdException
-import com.mercadolivro.exceptions.customer.CustomerGetException
-import com.mercadolivro.exceptions.customer.CustomerUpdateException
+import com.mercadolivro.modules.book.exceptions.BookDeleteException
+import com.mercadolivro.modules.book.exceptions.BookEnabledException
+import com.mercadolivro.modules.book.exceptions.BookGetException
+import com.mercadolivro.modules.book.exceptions.BookUpdateException
+import com.mercadolivro.modules.customer.exceptions.CustomerDeleteException
+import com.mercadolivro.modules.customer.exceptions.CustomerEnableException
+import com.mercadolivro.modules.customer.exceptions.CustomerFindByActiveException
+import com.mercadolivro.modules.customer.exceptions.CustomerGetByIdException
+import com.mercadolivro.modules.customer.exceptions.CustomerGetException
+import com.mercadolivro.modules.customer.exceptions.CustomerUpdateException
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus

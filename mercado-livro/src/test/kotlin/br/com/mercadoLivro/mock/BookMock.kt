@@ -1,8 +1,8 @@
 package br.com.mercadoLivro.mock
 
-import com.mercadolivro.entitys.Book
-import com.mercadolivro.enums.BookStatus.ATIVO
-import com.mercadolivro.enums.BookStatus.CANCELADO
+import com.mercadolivro.modules.book.dataproviders.jpa.entities.Book
+import com.mercadolivro.modules.book.enums.BookStatus.ATIVO
+import com.mercadolivro.modules.book.enums.BookStatus.CANCELADO
 
 class BookMock {
 
