@@ -1,0 +1,12 @@
+.gradle
+/build/
+local.properties
+!gradle/wrapper/gradle-wrapper.jar
+bin/
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+/out/
