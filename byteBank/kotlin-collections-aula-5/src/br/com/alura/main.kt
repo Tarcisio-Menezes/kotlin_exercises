@@ -50,6 +50,9 @@ fun main() {
 
     println(agenda)
     println(agenda['A'])
+
+    fun sum(a: Int, b: Int) = a * b
+    println(sum(2,3))
 }
 
 data class Pedido(val numero: Int, val valor: Double)
